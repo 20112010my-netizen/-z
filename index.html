@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Madd Web Studio</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:#090a0f;
+  color:#fff;
+  font-family:Arial,Tahoma,sans-serif;
+  overflow-x:hidden;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  background:#11131a;
+  border-bottom:1px solid #252833;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:900;
+}
+
+.logo span{
+  color:#ffb52e;
+}
+
+.headerButtons{
+  display:flex;
+  gap:8px;
+}
+
+button{
+  border:0;
+  color:white;
+  background:#20232d;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+button:hover{
+  background:#303440;
+}
+
+.primary{
+  background:#ffad22;
+  color:#111;
+  font-weight:bold;
+}
+
+.workspace{
+  flex:1;
+  display:grid;
+  grid-template-columns:300px 1fr 280px;
+  min-height:calc(100vh - 64px);
+}
+
+.panel{
+  background:#11131a;
+  padding:15px;
+  overflow-y:auto;
+}
+
+.left{
+  border-left:1px solid #242732;
+}
+
+.right{
+  border-right:1px solid #242732;
+}
+
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at center,#181b25 0,#090a0f 65%);
+}
+
+.section{
+  margin-bottom:18px;
+}
+
+.sectionTitle{
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:10px;
+  color:#ddd;
+}
+
+.tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.tools button{
+  min-height:45px;
+}
+
+input[type=file]{
+  display:none;
+}
+
+label.upload{
+  display:block;
+  background:#20232d;
+  padding:13px;
+  text-align:center;
+  border-radius:12px;
+  cursor:pointer;
+  margin-bottom:8px;
+}
+
+label.upload:hover{
+  background:#303440;
+}
+
+input[type=text],
+input[type=number],
+select{
+  width:100%;
+  background:#1c1f27;
+  border:1px solid #303440;
+  color:#fff;
+  border-radius:10px;
+  padding:11px;
+  outline:none;
+  margin-bottom:8px;
+}
+
+input[type=color]{
+  width:100%;
+  height:42px;
+  border:0;
+  border-radius:10px;
+  background:#1c1f27;
+}
+
+.rangeRow{
+  margin:13px 0;
+}
+
+.rangeRow label{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#bbb;
+  margin-bottom:7px;
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:#ffad22;
+}
+
+.canvasWrap{
+  position:relative;
+  width:min(92vw,850px);
+  max-height:75vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+canvas{
+  max-width:100%;
+  max-height:75vh;
+  background:#151821;
+  border-radius:15px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  touch-action:none;
+}
+
+.empty{
+  width:min(92vw,700px);
+  aspect-ratio:16/10;
+  border:2px dashed #393d49;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#777;
+  text-align:center;
+  padding:30px;
+}
+
+.status{
+  margin-top:12px;
+  color:#888;
+  font-size:12px;
+  text-align:center;
+}
+
+.layer{
+  background:#1a1d25;
+  border:1px solid #2b2f3a;
+  padding:10px;
+  border-radius:11px;
+  margin-bottom:7px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  cursor:pointer;
+}
+
+.layer.active{
+  border-color:#ffad22;
+}
+
+.layerName{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px;
+}
+
+.layerBtns{
+  display:flex;
+  gap:4px;
+}
+
+.layerBtns button{
+  padding:6px 8px;
+  border-radius:8px;
+}
+
+.mobileTools{
+  display:none;
+}
+
+.cameraBox{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:500;
+  flex-direction:column;
+}
+
+.cameraBox video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.cameraControls{
+  position:absolute;
+  bottom:25px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+
+.shutter{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:#fff;
+  border:7px solid #aaa;
+}
+
+.closeCamera{
+  position:absolute;
+  top:25px;
+  right:20px;
+  z-index:2;
+  background:#0008;
+  border-radius:50%;
+}
+
+@media(max-width:1000px){
+  .workspace{
+    grid-template-columns:230px 1fr;
+  }
+
+  .right{
+    display:none;
+  }
+}
+
+@media(max-width:700px){
+  header{
+    height:58px;
+  }
+
+  .workspace{
+    display:block;
+  }
+
+  .left{
+    display:none;
+  }
+
+  .center{
+    min-height:calc(100vh - 58px);
+    padding:10px;
+    justify-content:flex-start;
+    padding-top:15px;
+  }
+
+  .canvasWrap{
+    width:96vw;
+  }
+
+  canvas{
+    max-height:65vh;
+  }
+
+  .mobileTools{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+    width:100%;
+    margin-top:10px;
+  }
+
+  .mobileTools button{
+    padding:9px 4px;
+    font-size:11px;
+  }
+
+  .right{
+    display:block;
+    border:0;
+    padding:10px;
+  }
+
+  .panel.right{
+    background:#0d0f14;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">Madd <span>مَد</span></div>
+
+  <div class="headerButtons">
+    <button onclick="openCamera()">📷 كاميرا</button>
+    <button class="primary" onclick="exportPNG()">⬇️ حفظ</button>
+  </div>
+</header>
+
+<div class="workspace">
+
+<!-- LEFT -->
+<aside class="panel left">
+
+  <div class="section">
+    <div class="sectionTitle">الصور</div>
+
+    <label class="upload">
+      🖼️ إضافة صورة
+      <input id="imageInput" type="file" accept="image/*">
+    </label>
+
+    <button style="width:100%" onclick="openCamera()">
+      📷 التقاط من الكاميرا
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">النص</div>
+
+    <input id="textInput"
+           type="text"
+           placeholder="اكتب النص هنا">
+
+    <button class="primary"
+            style="width:100%"
+            onclick="addText()">
+      ＋ إضافة النص
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">أدوات</div>
+
+    <div class="tools">
+      <button onclick="duplicateLayer()">📄 نسخ</button>
+      <button onclick="deleteLayer()">🗑️ حذف</button>
+
+      <button onclick="moveLayerUp()">⬆️ أمام</button>
+      <button onclick="moveLayerDown()">⬇️ خلف</button>
+
+      <button onclick="centerLayer()">🎯 وسط</button>
+      <button onclick="resetLayer()">↩️ إعادة</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">تأثير النص</div>
+
+    <div class="rangeRow">
+      <label>
+        <span>تمديد الحروف</span>
+        <span id="scaleXValue">100%</span>
+      </label>
+      <input id="scaleX"
+             type="range"
+             min="50"
+             max="300"
+             value="100"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>حجم النص</span>
+        <span id="fontSizeValue">60</span>
+      </label>
+      <input id="fontSize"
+             type="range"
+             min="10"
+             max="200"
+             value="60"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>المسافة بين الحروف</span>
+        <span id="letterSpacingValue">0</span>
+      </label>
+      <input id="letterSpacing"
+             type="range"
+             min="-20"
+             max="50"
+             value="0"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>الشفافية</span>
+        <span id="opacityValue">100%</span>
+      </label>
+      <input id="opacity"
+             type="range"
+             min="0"
+             max="100"
+             value="100"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="sectionTitle">لون النص</div>
+    <input id="textColor"
+           type="color"
+           value="#ffffff"
+           onchange="updateSelected()">
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">دمج النص</div>
+
+    <select id="blendMode" onchange="updateSelected()">
+      <option value="source-over">عادي</option>
+      <option value="multiply">Multiply</option>
+      <option value="screen">Screen</option>
+      <option value="overlay">Overlay</option>
+      <option value="difference">Difference</option>
+      <option value="lighter">Lighter</option>
+    </select>
+
+    <button style="width:100%"
+            onclick="sendTextBehind()">
+      🔤 النص خلف الصورة
+    </button>
+  </div>
+
+</aside>
+
+
+<!-- CENTER -->
+<main class="center">
+
+  <div id="empty" class="empty">
+    <div>
+      <h2>مَد — محرر الصور والنصوص</h2>
+      <p>أضف صورة أو افتح الكاميرا ثم ابدأ التصميم</p>
+    </div>
+  </div>
+
+  <div class="canvasWrap" id="canvasWrap" style="display:none">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div class="mobileTools">
+    <button onclick="addText()">🔤 نص</button>
+    <button onclick="openCamera()">📷 كاميرا</button>
+    <button onclick="sendTextBehind()">↩️ خلف</button>
+    <button onclick="exportPNG()">💾 حفظ</button>
+  </div>
+
+  <div class="status" id="status">
+    لا توجد صورة
+  </div>
+
+</main>
+
+
+<!-- RIGHT -->
+<aside class="panel right">
+
+  <div class="section">
+    <div class="sectionTitle">الطبقات</div>
+    <div id="layers"></div>
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">تعديل الصورة</div>
+
+    <div class="rangeRow">
+      <label>
+        <span>السطوع</span>
+        <span id="brightnessValue">100%</span>
+      </label>
+
+      <input id="brightness"
+             type="range"
+             min="0"
+             max="200"
+             value="100"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>التباين</span>
+        <span id="contrastValue">100%</span>
+      </label>
+
+      <input id="contrast"
+             type="range"
+             min="0"
+             max="200"
+             value="100"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>التشبع</span>
+        <span id="saturationValue">100%</span>
+      </label>
+
+      <input id="saturation"
+             type="range"
+             min="0"
+             max="200"
+             value="100"
+             oninput="updateSelected()">
+    </div>
+
+    <div class="rangeRow">
+      <label>
+        <span>Blur</span>
+        <span id="blurValue">0</span>
+      </label>
+
+      <input id="blur"
+             type="range"
+             min="0"
+             max="20"
+             value="0"
+             oninput="updateSelected()">
+    </div>
+
+    <button style="width:100%"
+            onclick="grayscaleImage()">
+      ⚫ أبيض وأسود
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="sectionTitle">الممحاة</div>
+
+    <button style="width:100%"
+            onclick="toggleEraser()">
+      🖌️ ممحاة الصورة
+    </button>
+
+    <p style="font-size:11px;color:#777">
+      استخدم الممحاة على الصورة لكشف النص الموجود خلفها.
+    </p>
+  </div>
+
+</aside>
+
+</div>
+</div>
+
+
+<!-- CAMERA -->
+<div id="cameraBox" class="cameraBox">
+
+  <button class="closeCamera"
+          onclick="closeCamera()">
+    ✕
+  </button>
+
+  <video id="video" autoplay playsinline></video>
+
+  <div class="cameraControls">
+
+    <button class="shutter"
+            onclick="takePhoto()">
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let layers = [];
+let selected = null;
+
+let dragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+let eraserMode = false;
+
+let videoStream = null;
+
+
+/* =========================
+   IMAGE UPLOAD
+========================= */
+
+document.getElementById("imageInput")
+.addEventListener("change", function(e){
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event){
+
+    const img = new Image();
+
+    img.onload = function(){
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      layers.push({
+        id:Date.now(),
+        type:"image",
+        name:"الصورة",
+        image:img,
+
+        x:canvas.width/2,
+        y:canvas.height/2,
+
+        scale:Math.min(
+          canvas.width/img.width,
+          canvas.height/img.height
+        ),
+
+        rotation:0,
+
+        opacity:1,
+
+        brightness:100,
+        contrast:100,
+        saturation:100,
+        blur:0,
+
+        blend:"source-over",
+
+        erased:[]
+      });
+
+      selected = layers[layers.length-1];
+
+      showCanvas();
+      render();
+      updateLayers();
+
+    };
+
+    img.src = event.target.result;
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+
+/* =========================
+   SHOW CANVAS
+========================= */
+
+function showCanvas(){
+
+  document.getElementById("empty").style.display="none";
+  document.getElementById("canvasWrap").style.display="flex";
+
+  document.getElementById("status").innerText =
+    "اسحب العناصر داخل الصورة للتحكم بها";
+
+}
+
+
+/* =========================
+   ADD TEXT
+========================= */
+
+function addText(){
+
+  const input=document.getElementById("textInput");
+
+  const value=input.value.trim() || "اكتب هنا";
+
+  const layer={
+
+    id:Date.now(),
+
+    type:"text",
+
+    name:value,
+
+    text:value,
+
+    x:canvas.width/2,
+
+    y:canvas.height/2,
+
+    fontSize:60,
+
+    scaleX:1,
+
+    letterSpacing:0,
+
+    rotation:0,
+
+    color:"#ffffff",
+
+    opacity:1,
+
+    blend:"source-over"
+
+  };
+
+  layers.push(layer);
+
+  selected=layer;
+
+  showCanvas();
+
+  updateControls();
+
+  updateLayers();
+
+  render();
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render(){
+
+  if(!canvas.width) return;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(const layer of layers){
+
+    ctx.save();
+
+    ctx.globalAlpha=layer.opacity ?? 1;
+
+    ctx.globalCompositeOperation =
+      layer.blend || "source-over";
+
+    ctx.translate(layer.x,layer.y);
+
+    ctx.rotate((layer.rotation||0)*Math.PI/180);
+
+    if(layer.type==="image"){
+
+      drawImageLayer(layer);
+
+    }
+
+    if(layer.type==="text"){
+
+      drawTextLayer(layer);
+
+    }
+
+    ctx.restore();
+
+  }
+
+}
+
+
+/* =========================
+   IMAGE
+========================= */
+
+function drawImageLayer(layer){
+
+  const img=layer.image;
+
+  const scale=layer.scale || 1;
+
+  ctx.filter=
+    `brightness(${layer.brightness||100}%)
+     contrast(${layer.contrast||100}%)
+     saturate(${layer.saturation||100}%)
+     blur(${layer.blur||0}px)`;
+
+  const w=img.width*scale;
+  const h=img.height*scale;
+
+  ctx.drawImage(
+    img,
+    -w/2,
+    -h/2,
+    w,
+    h
+  );
+
+  ctx.filter="none";
+
+}
+
+
+/* =========================
+   TEXT
+========================= */
+
+function drawTextLayer(layer){
+
+  ctx.fillStyle=layer.color || "#fff";
+
+  ctx.font=
+    `bold ${layer.fontSize}px Arial`;
+
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+
+  const text=layer.text;
+
+  let spacing=layer.letterSpacing || 0;
+
+  let chars=[...text];
+
+  let widths=chars.map(c=>ctx.measureText(c).width);
+
+  let total=widths.reduce((a,b)=>a+b,0)
+            +spacing*(chars.length-1);
+
+  total*=layer.scaleX || 1;
+
+  let x=-total/2;
+
+  chars.forEach((char,i)=>{
+
+    let w=widths[i]*(layer.scaleX || 1);
+
+    ctx.fillText(
+      char,
+      x+w/2,
+      0
+    );
+
+    x+=w+spacing*(layer.scaleX || 1);
+
+  });
+
+}
+
+
+/* =========================
+   POINTER
+========================= */
+
+function getPointer(e){
+
+  const rect=canvas.getBoundingClientRect();
+
+  const scaleX=canvas.width/rect.width;
+  const scaleY=canvas.height/rect.height;
+
+  return {
+
+    x:(e.clientX-rect.left)*scaleX,
+    y:(e.clientY-rect.top)*scaleY
+
+  };
+
+}
+
+
+canvas.addEventListener("pointerdown",function(e){
+
+  const p=getPointer(e);
+
+  if(eraserMode){
+
+    eraseAt(p.x,p.y);
+    return;
+  }
+
+  selected=findLayerAt(p.x,p.y);
+
+  if(selected){
+
+    dragging=true;
+
+    dragOffsetX=p.x-selected.x;
+    dragOffsetY=p.y-selected.y;
+
+    updateControls();
+    updateLayers();
+
+    render();
+
+  }
+
+});
+
+
+canvas.addEventListener("pointermove",function(e){
+
+  if(!dragging || !selected) return;
+
+  const p=getPointer(e);
+
+  selected.x=p.x-dragOffsetX;
+  selected.y=p.y-dragOffsetY;
+
+  render();
+
+});
+
+
+canvas.addEventListener("pointerup",function(){
+
+  dragging=false;
+
+});
+
+
+canvas.addEventListener("pointercancel",function(){
+
+  dragging=false;
+
+});
+
+
+/* =========================
+   FIND LAYER
+========================= */
+
+function findLayerAt(x,y){
+
+  for(let i=layers.length-1;i>=0;i--){
+
+    const l=layers[i];
+
+    const size =
+      l.type==="text"
+      ? l.fontSize*2
+      : Math.max(
+          l.image.width*l.scale,
+          l.image.height*l.scale
+        );
+
+    if(
+      Math.abs(x-l.x)<size &&
+      Math.abs(y-l.y)<size
+    ){
+
+      return l;
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+/* =========================
+   CONTROLS
+========================= */
+
+function updateControls(){
+
+  if(!selected) return;
+
+  if(selected.type==="text"){
+
+    document.getElementById("scaleX").value=
+      selected.scaleX*100;
+
+    document.getElementById("fontSize").value=
+      selected.fontSize;
+
+    document.getElementById("letterSpacing").value=
+      selected.letterSpacing;
+
+    document.getElementById("opacity").value=
+      selected.opacity*100;
+
+    document.getElementById("textColor").value=
+      selected.color;
+
+    document.getElementById("blendMode").value=
+      selected.blend || "source-over";
+
+  }
+
+  if(selected.type==="image"){
+
+    document.getElementById("brightness").value=
+      selected.brightness;
+
+    document.getElementById("contrast").value=
+      selected.contrast;
+
+    document.getElementById("saturation").value=
+      selected.saturation;
+
+    document.getElementById("blur").value=
+      selected.blur;
+
+  }
+
+}
+
+
+function updateSelected(){
+
+  if(!selected) return;
+
+  if(selected.type==="text"){
+
+    selected.scaleX=
+      Number(document.getElementById("scaleX").value)/100;
+
+    selected.fontSize=
+      Number(document.getElementById("fontSize").value);
+
+    selected.letterSpacing=
+      Number(document.getElementById("letterSpacing").value);
+
+    selected.opacity=
+      Number(document.getElementById("opacity").value)/100;
+
+    selected.color=
+      document.getElementById("textColor").value;
+
+    selected.blend=
+      document.getElementById("blendMode").value;
+
+    document.getElementById("scaleXValue").innerText=
+      Math.round(selected.scaleX*100)+"%";
+
+    document.getElementById("fontSizeValue").innerText=
+      selected.fontSize;
+
+    document.getElementById("letterSpacingValue").innerText=
+      selected.letterSpacing;
+
+    document.getElementById("opacityValue").innerText=
+      Math.round(selected.opacity*100)+"%";
+
+  }
+
+  if(selected.type==="image"){
+
+    selected.brightness=
+      Number(document.getElementById("brightness").value);
+
+    selected.contrast=
+      Number(document.getElementById("contrast").value);
+
+    selected.saturation=
+      Number(document.getElementById("saturation").value);
+
+    selected.blur=
+      Number(document.getElementById("blur").value);
+
+    document.getElementById("brightnessValue").innerText=
+      selected.brightness+"%";
+
+    document.getElementById("contrastValue").innerText=
+      selected.contrast+"%";
+
+    document.getElementById("saturationValue").innerText=
+      selected.saturation+"%";
+
+    document.getElementById("blurValue").innerText=
+      selected.blur;
+
+  }
+
+  render();
+
+}
+
+
+/* =========================
+   LAYERS
+========================= */
+
+function updateLayers(){
+
+  const box=document.getElementById("layers");
+
+  box.innerHTML="";
+
+  [...layers].reverse().forEach(layer=>{
+
+    const div=document.createElement("div");
+
+    div.className=
+      "layer"+
+      (selected===layer ? " active":"");
+
+    const name=
+      layer.type==="text"
+      ? "🔤 "+layer.text
+      : "🖼️ "+layer.name;
+
+    div.innerHTML=`
+
+      <div class="layerName">${name}</div>
+
+      <div class="layerBtns">
+
+        <button onclick="selectLayer(${layer.id})">
+          ✓
+        </button>
+
+      </div>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+function selectLayer(id){
+
+  selected=layers.find(l=>l.id===id);
+
+  updateControls();
+  updateLayers();
+  render();
+
+}
+
+
+/* =========================
+   LAYER ACTIO
